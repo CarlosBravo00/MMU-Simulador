@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Example</title>
+</head>
+
+<body>
+    <div class="inputBlock">
+        <h3>Operacion P</h3>
+        <label for="Pbytes">Bytes:</label><br>
+        <input type="number" id="Pbytes" name="Pbytes"><br>
+        <label for="Pid">ID Proceso:</label><br>
+        <input type="number" id="Pid" name="Pid"><br><br>
+        <button type="button" onclick="inputP()">Mandar</button>
+    </div>
+    <div class="inputBlock">
+        <h3>Operacion A</h3>
+        <label for="Adirc">Direccion Virtual:</label><br>
+        <input type="number" id="Adirc" name="Adirc"><br>
+        <label for="Aid">ID Proceso:</label><br>
+        <input type="number" id="Aid" name="Aid"><br><br>
+        <button type="button" onclick="inputA()">Mandar</button>
+
+    </div>
+    <div class="inputBlock">
+        <h3>Operacion L</h3>
+        <label for="Lid">ID Proceso:</label><br>
+        <input type="number" id="Lid" name="Lid"><br><br>
+        <br>
+        <br>
+        <button type="button" onclick="inputL()">Mandar</button>
+    </div>
+    <br>
+    <h2 id='welcome' style="clear: both;"> Memoria Real </h1>
+        <div id='console'></div>
+        <script type="text/javascript" src="code.js"></script>
+        <script type="text/javascript" src="input.js"></script>
+</body>
+
+</html>
+
+<style>
+    .box {
+        text-align: center;
+        width: 20px;
+        position: relative;
+        border: 2px solid black;
+        padding: 5px;
+        margin: 5px;
+        float: left;
+        display: block;
+        clear: none;
+    }
+
+    .inputBlock {
+        text-align: center;
+        padding: 10px 20px 10px 20px;
+        margin: 25px;
+        border: 2px solid black;
+        float: left;
+        display: block;
+        clear: none;
+    }
+
+    .freeBox {
+        background-color: #90EE90;
+    }
+</style>
