@@ -7,35 +7,51 @@
 
 <body>
     <div class="inputBlock">
+        <h3>Algoritmo de Remplazo</h3>
+        <select id="algor" oninput="algortPick()">
+            <option value="FIFO">FIFO</option>
+            <option value="LRU">LRU</option>
+            <option value="Random">Random</option>
+        </select>
+        <p>Nota: Una vez establecido no se pude modificar
+            <br>hasta que se reinicie la simulacion
+        </p>
+        <button type="button" onclick="restart()">Reiniciar Simulacion</button>
+    </div>
+    <div class="inputBlock">
         <h3>Operacion P</h3>
         <label for="Pbytes">Bytes:</label><br>
-        <input type="number" id="Pbytes" name="Pbytes"><br>
+        <input type="number" id="Pbytes" name="Pbytes" min="1"><br>
         <label for="Pid">ID Proceso:</label><br>
-        <input type="number" id="Pid" name="Pid"><br><br>
+        <input type="number" id="Pid" name="Pid" min="1"><br><br>
         <button type="button" onclick="inputP()">Mandar</button>
     </div>
     <div class="inputBlock">
         <h3>Operacion A</h3>
         <label for="Adirc">Direccion Virtual:</label><br>
-        <input type="number" id="Adirc" name="Adirc"><br>
+        <input type="number" id="Adirc" name="Adirc" min="0"><br>
         <label for="Aid">ID Proceso:</label><br>
-        <input type="number" id="Aid" name="Aid"><br><br>
+        <input type="number" id="Aid" name="Aid" min="1"><br><br>
+        <input type="checkbox" id="Amod" name="Amod">
+        <label style="margin-right: 15px;" for="Amod">Modificar</label>
         <button type="button" onclick="inputA()">Mandar</button>
 
     </div>
     <div class="inputBlock">
         <h3>Operacion L</h3>
         <label for="Lid">ID Proceso:</label><br>
-        <input type="number" id="Lid" name="Lid"><br><br>
+        <input type="number" id="Lid" name="Lid" min="1"><br><br>
         <br>
         <br>
         <button type="button" onclick="inputL()">Mandar</button>
     </div>
     <br>
-    <h2 id='welcome' style="clear: both;"> Memoria Real </h1>
-        <div id='console'></div>
-        <script type="text/javascript" src="code.js"></script>
-        <script type="text/javascript" src="input.js"></script>
+    <div style="clear: both;" id='console'>
+    <h3>Console</h3>
+    </div>
+    <h2> Memoria Real </h2>
+    <script type="text/javascript" src="code.js"></script>
+    <script type="text/javascript" src="input.js"></script>
 </body>
 
 </html>
@@ -44,13 +60,14 @@
     .box {
         text-align: center;
         width: 20px;
-        position: relative;
         border: 2px solid black;
         padding: 5px;
         margin: 5px;
         float: left;
         display: block;
         clear: none;
+        font-size: 80%;
+        overflow: hidden;
     }
 
     .inputBlock {
@@ -66,4 +83,17 @@
     .freeBox {
         background-color: #90EE90;
     }
+
+    #console{
+        border: 2px solid black;
+        padding: 0px 30px 20px 20px;
+        margin: 10px;
+        width: 500px;
+    }
+
+    h2{
+        clear: both;
+        margin: 10px;
+    }
+
 </style>
