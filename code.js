@@ -7,6 +7,8 @@ const Disk = new Array(256).fill(0); // Meoria secundaria
 let diskPointer = 0;
 let time = 0; // Metricas 
 
+let algorithm = "FIFO"
+
 var Mconsole = document.getElementById("console");
 
 //Procedures
@@ -16,6 +18,7 @@ function ProcedureP(bytes, processid) {
         id: processid,
         time: time,
         accTime: time,
+        bytes: bytes,
         pages: [], //Tabla de mapeo 
         offMemory: false
     }
@@ -29,7 +32,7 @@ function ProcedureP(bytes, processid) {
     console.log(processid, newProcces.pages);
 }
 
-function ProcedureA(vDirc, processid) {
+function ProcedureA(vDirc, processid, modif) {
 
     const numPage = Math.floor(vDirc / 16);
     const extraBytes = vDirc % 16;
@@ -37,7 +40,9 @@ function ProcedureA(vDirc, processid) {
     console.log('---Buscando la pagina virtual:', numPage, 'del proceso:', processid)
     listProcess.forEach((e) => {
         if (e.id == processid) {
-            e.accTime = time;
+            if (modif) {
+                e.accTime = time;
+            }
             if (e.pages[numPage] < 0) {
 
                 console.log('Pagina:', numPage, 'de proceso:', processid, 'esta en disco marco:', Math.abs(e.pages[numPage]) - 1);
@@ -105,14 +110,7 @@ function loadPage(processid) {
 }
 
 function ProcedureSwap(processid) {
-    let swapProc = {};
-    let minTime = Infinity;
-    listProcess.forEach(e => {
-        if (e.time < minTime && !e.offMemory && e.id != processid) {
-            minTime = e.time;
-            swapProc = e;
-        }
-    });
+    let swapProc = swapAlgo(processid);
 
     let selectedPage;
     for (j = 0; j < swapProc.pages.length; j++) {
@@ -146,6 +144,40 @@ function ProcedureSwap(processid) {
     });
 
     return selectedPage;
+}
+
+function swapAlgo(processid) {
+    let swapProc = null;
+    if (algorithm == "FIFO") {
+        let minTime = Infinity;
+        listProcess.forEach(e => {
+            if (e.time < minTime && !e.offMemory && e.id != processid) {
+                minTime = e.time;
+                swapProc = e;
+            }
+        });
+        return swapProc
+    }
+
+    else if (algorithm == "LRU") {
+        let minTime = Infinity;
+        listProcess.forEach(e => {
+            if (e.accTime < minTime && !e.offMemory && e.id != processid) {
+                minTime = e.time;
+                swapProc = e;
+            }
+        });
+        return swapProc
+    }
+
+    else if (algorithm == "Random") {
+        console.log(listProcess.length);
+        do {
+            swapProc = Math.floor(Math.random() * (listProcess.length))
+        } while (swapProc == processid)
+        console.log(swapProc);
+        return listProcess[swapProc]
+    }
 }
 
 function enterSecondary(processid) {

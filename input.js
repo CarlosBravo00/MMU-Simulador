@@ -6,8 +6,14 @@ function inputP() {
 
     const bytes = document.getElementById('Pbytes').value;
     const processid = document.getElementById('Pid').value;
-    ProcedureP(bytes, processid);
-    time += 1;
+
+    if (bytes <= 2048 && !validateId(processid) && bytes > 0 && processid > 0) {
+        ProcedureP(bytes, processid);
+        time += 1;
+    } else {
+        Mconsole.innerHTML += '!!! Error en ProcesoP: ID existe o bytes mayores a 2048<br>';
+    }
+
     document.getElementById('Pbytes').value = null;
     document.getElementById('Pid').value = null;
 
@@ -21,10 +27,14 @@ function inputA() {
     const virDirc = document.getElementById('Adirc').value;
     const processid = document.getElementById('Aid').value;
     const modificar = document.getElementById('Amod').checked;
-    ProcedureA(virDirc, processid, modificar);
 
-    console.log(modificar);
-    time += 1;
+    if(validateDirecc(processid, virDirc) && virDirc > 0){
+        ProcedureA(virDirc, processid, modificar);
+        time += 1;
+    } else {
+        Mconsole.innerHTML += '!!! Error en ProcesoA: ID no existe, o direccion virtual no existe en el proceso<br>';
+    }
+
     document.getElementById('Adirc').value = null;
     document.getElementById('Aid').value = null;
     document.getElementById('Amod').checked = false;
@@ -37,8 +47,14 @@ function inputL() {
     document.getElementById("algor").disabled = true;
 
     const processid = document.getElementById('Lid').value;
-    ProcedureL(processid);
-    time += 1;
+
+    if (validateId(processid)) {
+        ProcedureL(processid);
+        time += 1;
+    } else {
+        Mconsole.innerHTML += '!!! Error en ProcesoL: ID no existe <br>';
+    }
+
     document.getElementById('Lid').value = null;
 
     updateMemory();
@@ -51,6 +67,7 @@ function restart() {
 
 function algortPick() {
     document.getElementById("algor").disabled = true;
+    algorithm = document.getElementById("algor").value;
 }
 
 function addMemory() {
@@ -103,3 +120,29 @@ function updateDisk() {
         }
     }
 }
+
+function validateId(processid) {
+    returnValue = false;
+    listProcess.forEach((e) => {
+        if (e.id == processid) {
+            returnValue = true;
+        }
+    });
+
+    return returnValue;
+}
+
+function validateDirecc(processid, direcc) {
+    returnValue = false;
+    listProcess.forEach((e) => {
+        if (e.id == processid) {
+            const bytes = e.bytes;
+            console.log(bytes);
+            if (direcc <= bytes) {
+                returnValue = true;
+            }
+        }
+    });
+    return returnValue
+}
+
