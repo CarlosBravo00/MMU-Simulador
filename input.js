@@ -1,6 +1,72 @@
 addMemory();
 addDisk();
 
+let fileSelected = false;
+
+function fileSelect() {
+    const selected = document.getElementById("cFile").files.length > 0;
+    fileSelected = selected
+    document.getElementById("cmd").disabled = selected
+}
+function commandInput() {
+    if (fileSelected) {
+
+    } else {
+        commandLine(document.getElementById("cmd").value);
+        document.getElementById("cmd").value = null;
+    }
+}
+
+function commandLine(line) {
+    try {
+        const divided = line.split(' ');
+        console.log(divided);
+        switch (divided[0]) {
+            case 'P':
+                if (!isNaN(divided[1]) && !isNaN(divided[2])) {
+                    document.getElementById('Pbytes').value = divided[1];
+                    document.getElementById('Pid').value = divided[2];
+                    inputP();
+                } else {
+                    throw 'Parametros para Proceso P incorrectos'
+                }
+                break;
+            case 'A':
+                if (!isNaN(divided[1]) && !isNaN(divided[2]) && !isNaN(divided[3]) && (divided[3] == 1 || divided[3] == 0)) {
+                    document.getElementById('Adirc').value = divided[1];
+                    document.getElementById('Aid').value = divided[2];
+                    document.getElementById('Amod').checked = (divided[3] == 1);
+                    inputA();
+                } else {
+                    throw 'Parametros para Proceso A incorrectos'
+                }
+                break;
+            case 'L':
+                if (!isNaN(divided[1])) {
+                    document.getElementById('Lid').value = divided[1];
+                    inputL();
+                } else {
+                    throw 'Parametros para Proceso A incorrectos'
+                }
+                break;
+            case 'C':
+                Mconsole.innerHTML += line.substring(1) + '<br>';
+                break;
+            case 'F':
+                console.log('Metrics');
+                break;
+            case 'E':
+                Mconsole.innerHTML += "Adiooos! (No puedo cerrar la ventana)<br>";
+                break;
+            default:
+                throw 'Comando no reconocido';
+        }
+    } catch (err) {
+        console.log(err);
+        Mconsole.innerHTML += '!!! Error en linea de comando: ' + err + '<br>';
+    }
+}
+
 function inputP() {
     document.getElementById("algor").disabled = true;
 
@@ -28,7 +94,7 @@ function inputA() {
     const processid = document.getElementById('Aid').value;
     const modificar = document.getElementById('Amod').checked;
 
-    if(validateDirecc(processid, virDirc) && virDirc > 0){
+    if (validateDirecc(processid, virDirc) && virDirc >= 0) {
         ProcedureA(virDirc, processid, modificar);
         time += 1;
     } else {
@@ -136,9 +202,7 @@ function validateDirecc(processid, direcc) {
     returnValue = false;
     listProcess.forEach((e) => {
         if (e.id == processid) {
-            const bytes = e.bytes;
-            console.log(bytes);
-            if (direcc <= bytes) {
+            if (direcc <= e.bytes) {
                 returnValue = true;
             }
         }

@@ -45,9 +45,19 @@
         <br>
         <button type="button" onclick="inputL()">Mandar</button>
     </div>
+    <div class="inputBlock">
+        <br>
+        <label for="cFile">Elegir un archivo con comandos:</label>
+        <input type="file" id="cFile" name="cFile" accept=".txt" onchange="fileSelect()">
+        <br> <br>
+        <label for="cmd">Linea de comando:</label><br>
+        <input style="width: 90%;" type="text" id="cmd" name="cmd">
+        <br> <br> <br>
+        <button type="button" onclick="commandInput()">Mandar</button><br><br>
+    </div>
     <br>
     <div style="clear: both;" id='console'>
-    <h3>Console</h3>
+        <h3>Console</h3>
     </div>
     <h2> Memoria Real </h2>
     <script type="text/javascript" src="code.js"></script>
@@ -84,16 +94,15 @@
         background-color: #90EE90;
     }
 
-    #console{
+    #console {
         border: 2px solid black;
         padding: 0px 30px 20px 20px;
         margin: 10px;
         width: 600px;
     }
 
-    h2{
+    h2 {
         clear: both;
         margin: 10px;
     }
-
 </style>

@@ -18,7 +18,7 @@ function ProcedureP(bytes, processid) {
         id: processid,
         time: time,
         accTime: time,
-        bytes: bytes,
+        bytes: Number(bytes),
         pages: [], //Tabla de mapeo 
         offMemory: false
     }
