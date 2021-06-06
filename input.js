@@ -65,7 +65,7 @@ function commandLine(line) {
                 }
                 break;
             case 'C':
-                Mconsole.innerHTML += line.substring(1) + '<br>';
+                Mconsole.innerHTML += '-C: ' + line.substring(1) + '<br>';
                 break;
             case 'F':
                 displayMetrics();
@@ -140,18 +140,47 @@ function inputL() {
 }
 
 function displayMetrics() {
-    document.getElementById("btn1").disabled = true;
-    document.getElementById("btn2").disabled = true;
-    document.getElementById("btn3").disabled = true;
+    Mconsole.innerHTML += '***FINALIZACION***' + '<br><br>' + "----------------REPORTE---------------" + '<br><br>';
+
+    let allTrunaround = 0;
+    let finishedProcess = 0;
+    listProcess.forEach((procces) => {
+        if (procces.eTime) {
+            turnaround = procces.eTime - procces.sTime;
+            allTrunaround += turnaround;
+            finishedProcess += 1;
+            Mconsole.innerHTML += 'Proceso: ' + procces.id + '<br>------- TURNAROUND TIME: ' + turnaround / 1000 + ' seg<br>';
+            Mconsole.innerHTML += '------- PAGE FAULTS: ' + procces.pageFaults + '<br><br>';
+        }
+    })
+
+    let PromedioTurn = Math.round(allTrunaround / finishedProcess);
+    if (isNaN(PromedioTurn)) {
+        PromedioTurn = 0;
+    }
+    Mconsole.innerHTML += 'PROMEDIO DE TURNAROUNDS: ' + PromedioTurn / 1000 + ' seg <br>';
+    Mconsole.innerHTML += 'TOTAL SWAP-INS / SWAP-OUTS: ' + operacionesSwap + '<br>';
+
+    restart();
 
 }
 
 function restart() {
-    location.reload();
+    Mconsole.innerHTML += '<br>' + '***REINICIO***' + '<br><br>';
+    document.getElementById("algor").disabled = false;
+    listProcess = [];
+    Memory = new Array(128).fill(0);
+    memoryPointer = 0;
+    Disk = new Array(256).fill(0);
+    diskPointer = 0;
+    time = 0;
+    operacionesSwap = 0;
+
+    updateDisk();
+    updateMemory();
 }
 
 function algortPick() {
-    document.getElementById("algor").disabled = true;
     algorithm = document.getElementById("algor").value;
 }
 

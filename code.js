@@ -1,13 +1,17 @@
 
 //GLOBAL
 let listProcess = []; // Lista de todos los proccesos
-const Memory = new Array(128).fill(0); //Memoria principal dividia en paginas inicializada con 0 (Libres)
+let Memory = new Array(128).fill(0); //Memoria principal dividia en paginas inicializada con 0 (Libres)
 let memoryPointer = 0;
-const Disk = new Array(256).fill(0); // Meoria secundaria 
+let Disk = new Array(256).fill(0); // Meoria secundaria 
 let diskPointer = 0;
-let time = 0; // Metricas 
 
-let algorithm = "FIFO"
+//Metricas
+let time = 0;
+let operacionesSwap = 0;
+
+//Input
+let algorithm = "FIFO";
 
 var Mconsole = document.getElementById("console");
 
@@ -20,22 +24,25 @@ function ProcedureP(bytes, processid) {
         eTime: null,
         bytes: Number(bytes),
         pages: [], //Tabla de mapeo 
-        liberado: false
+        liberado: false,
+        pageFaults: 0
     }
 
     Mconsole.innerHTML += 'P+++Cargando ' + numPages + ' Paginas  (' + bytes + ' Bytes )' +  ' del proceso ' + processid  + '<br>';
     for (i = 0; i < numPages; i++) {
-        const paginaMemoria = loadPage(processid);
+        const [pFault, paginaMemoria] = loadPage(processid);
         const pagina = {
             loc: paginaMemoria,
             residencia: true,
             sTime: time,
             accTime: time
         }
+        if(pFault){
+            newProcces.pageFaults += 1;
+        }
         newProcces.pages.push(pagina);
     }
     listProcess.push(newProcces);
-    console.log(listProcess);
 }
 
 function ProcedureA(vDirc, processid, modif) {
@@ -49,17 +56,22 @@ function ProcedureA(vDirc, processid, modif) {
             if (!e.pages[numPage].residencia) //No esta en memoria real
             {
                 Mconsole.innerHTML += '~~~Pagina: ' + numPage + ' de proceso: ' + processid + ' esta en disco marco: ' + e.pages[numPage].loc + '<br>';
+                e.pageFaults += 1;
 
                 Disk[e.pages[numPage].loc] = 0; //Sacar de disco
-                diskPointer = e.pages[numPage].loc
                 
-                e.pages[numPage].loc = loadPage(processid); //Cargar la pagina
+                const [u, paginaMemoria] = loadPage(processid); //Cargar la pagina
+
+                e.pages[numPage].loc = paginaMemoria;
                 e.pages[numPage].residencia = true;
 
                 Mconsole.innerHTML += '~~~Pagina: ' + numPage + ' de proceso: ' + processid + ' cargada en memoria en marco: ' + e.pages[numPage].loc + '<br>';
 
+            } else{ //Ya esta en memoria real
+                time += 100;
             }
             const realDicc = (e.pages[numPage].loc * 16) + extraBytes;
+
             if(modif){
                 Mconsole.innerHTML += "~~~ Pagina " + numPage + " del proceso " + processid + " modificada" + '<br>';
             }
@@ -74,16 +86,19 @@ function ProcedureL(processid) {
     Mconsole.innerHTML += 'L------Liberando proceso: ' + processid + '<br>'
     for (i = 0; i < Memory.length; i++) {
         if (Memory[i] == processid) {
+            time += 100;
             Memory[i] = 0;
         }
     }
     for (i = 0; i < Disk.length; i++) {
         if (Disk[i] == processid) {
+            time += 100;
             Disk[i] = 0;
         }
     }
     listProcess.forEach((e) => {
         if (e.id == processid) {
+            e.eTime = time;
             e.pages = [];
             e.liberado = true;
         }
@@ -105,36 +120,36 @@ function loadPage(processid) {
     }
 
     if (noFailure) {
-        time += 1;
+        time += 1000;
         Memory[memoryPointer] = processid
         memoryPointer += 1;
-        return memoryPointer - 1;
+        return [false, memoryPointer - 1]
     } else {
-        return ProcedureSwap(processid);
+        operacionesSwap += 1;
+        return [true, ProcedureSwap(processid)];
     }
 }
 
 function ProcedureSwap(processid) {
     const [swapProc, pageID] = swapAlgo(processid);
-    console.log(swapProc);
-    console.log(pageID);
     const marcoMemory = swapProc.pages[pageID].loc;
 
+    //Swap Out
+    time += 1000;
     swapProc.pages[pageID].loc = enterSecondary(swapProc.id);
     swapProc.pages[pageID].residencia = false;
-
     Mconsole.innerHTML += '------Pagina: ' + pageID + ' del proceso: ' + swapProc.id + ' cargada en disco marco: ' + swapProc.pages[pageID].loc + '<br>'
 
-    //Cargar los cambios de el swapProc
     listProcess.forEach(e => {
         if (e.id == swapProc.id) {
             e = swapProc;
         }
     });
 
-    Memory[marcoMemory] = processid; //Swap
-
-    return pageID.loc;
+    //Swap In
+    time += 1000;
+    Memory[marcoMemory] = processid;
+    return marcoMemory;
 }
 
 function swapAlgo(processid) {
@@ -144,10 +159,8 @@ function swapAlgo(processid) {
     if (algorithm == "FIFO") {
         let minTime = Infinity;
         listProcess.forEach((procces) => {
-            console.log(procces)
             if (procces.id != processid) {
                 procces.pages.forEach((page, index) => {
-                    console.log(index);
                     if (page.sTime < minTime && page.residencia) {
                         minTime = page.sTime;
                         swapProc = procces;
@@ -179,7 +192,14 @@ function swapAlgo(processid) {
         do {
             swapProc = listProcess[Math.floor(Math.random() * (listProcess.length))];
             pageID = Math.floor(Math.random() * (swapProc.pages.length));
-        } while (swapProc.id == processid || !swapProc.pages[pageID].residencia)
+            console.log(swapProc);
+            console.log(pageID);
+            if(swapProc.id != processid && !swapProc.liberado){
+                if(swapProc.pages[pageID].residencia){
+                    break;
+                }
+            }
+        } while (true)
         return [swapProc, pageID];
     }
 }

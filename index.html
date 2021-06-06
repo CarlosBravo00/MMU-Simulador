@@ -16,7 +16,7 @@
         <p>Nota: Una vez establecido no se pude modificar
             <br>hasta que se reinicie la simulacion
         </p>
-        <button type="button" onclick="restart()">Reiniciar Simulacion</button>
+        <button type="button" onclick="location.reload()">Reiniciar Simulacion</button>
     </div>
     <div class="inputBlock">
         <h3>Operacion P</h3>
@@ -34,7 +34,7 @@
         <input type="number" id="Aid" name="Aid" min="1"><br><br>
         <input type="checkbox" id="Amod" name="Amod">
         <label style="margin-right: 15px;" for="Amod">Modificar</label>
-        <button id="btn1" type="button" onclick="inputA()">Mandar</button>
+        <button id="btn2" type="button" onclick="inputA()">Mandar</button>
 
     </div>
     <div class="inputBlock">
@@ -43,7 +43,7 @@
         <input type="number" id="Lid" name="Lid" min="1"><br><br>
         <br>
         <br>
-        <button id="btn1" type="button" onclick="inputL()">Mandar</button>
+        <button id="btn3" type="button" onclick="inputL()">Mandar</button>
     </div>
     <div class="inputBlock">
         <br>
@@ -53,11 +53,13 @@
         <label for="cmd">Linea de comando:</label><br>
         <input style="width: 90%;" type="text" id="cmd" name="cmd">
         <br> <br> <br>
-        <button id="btn1" type="button" onclick="commandInput()">Mandar</button><br><br>
+        <button id="btn4" type="button" onclick="commandInput()">Mandar</button><br><br>
     </div>
     <br>
     <div style="clear: both;" id='console'>
-        <h3>Console</h3>
+        <h3 style="float: left; display: block;">Console</h3>
+        <button style="float: right; display: block; margin: 20px 10px 10px 20px;" type="button" onclick="displayMetrics()">Finalizar</button>
+        <br><br><br><br>
     </div>
     <h2> Memoria Real </h2>
     <script type="text/javascript" src="code.js"></script>
@@ -99,6 +101,8 @@
         padding: 0px 30px 20px 20px;
         margin: 10px;
         width: 600px;
+        float: left;
+        display: block;
     }
 
     h2 {
