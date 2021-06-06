@@ -36,7 +36,6 @@ function commandLine(line) {
         let divided = line.split(' ');
         divided = divided.filter(n => n)
 
-        console.log(divided);
         switch (divided[0]) {
             case 'P':
                 if (!isNaN(divided[1]) && !isNaN(divided[2])) {
@@ -91,7 +90,6 @@ function inputP() {
 
     if (bytes <= 2048 && !validateId(processid) && bytes > 0 && processid > 0) {
         ProcedureP(bytes, processid);
-        time += 1;
     } else {
         Mconsole.innerHTML += '!!! Error en ProcesoP: ID existe o bytes mayores a 2048<br>';
     }
@@ -112,7 +110,6 @@ function inputA() {
 
     if (validateDirecc(processid, virDirc) && virDirc >= 0) {
         ProcedureA(virDirc, processid, modificar);
-        time += 1;
     } else {
         Mconsole.innerHTML += '!!! Error en ProcesoA: ID no existe, o direccion virtual no existe en el proceso<br>';
     }
@@ -132,7 +129,6 @@ function inputL() {
 
     if (validateId(processid)) {
         ProcedureL(processid);
-        time += 1;
     } else {
         Mconsole.innerHTML += '!!! Error en ProcesoL: ID no existe <br>';
     }
@@ -144,6 +140,9 @@ function inputL() {
 }
 
 function displayMetrics() {
+    document.getElementById("btn1").disabled = true;
+    document.getElementById("btn2").disabled = true;
+    document.getElementById("btn3").disabled = true;
 
 }
 
@@ -210,18 +209,18 @@ function updateDisk() {
 function validateId(processid) {
     returnValue = false;
     listProcess.forEach((e) => {
-        if (e.id == processid) {
+        if (e.id == processid && !e.liberado) {
             returnValue = true;
         }
     });
-
     return returnValue;
 }
+
 
 function validateDirecc(processid, direcc) {
     returnValue = false;
     listProcess.forEach((e) => {
-        if (e.id == processid) {
+        if (e.id == processid && !e.liberado) {
             if (direcc <= e.bytes) {
                 returnValue = true;
             }
