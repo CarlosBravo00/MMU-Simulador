@@ -2,24 +2,40 @@ addMemory();
 addDisk();
 
 let fileSelected = false;
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
 
 function fileSelect() {
     const selected = document.getElementById("cFile").files.length > 0;
     fileSelected = selected
     document.getElementById("cmd").disabled = selected
 }
+
 function commandInput() {
     if (fileSelected) {
-
+        var fileToLoad = document.getElementById("cFile").files[0];
+        var fileReader = new FileReader();
+        fileReader.onload = function (fileLoadedEvent) {
+            var textFromFileLoaded = fileLoadedEvent.target.result;
+            var lines = textFromFileLoaded.split(/[\r\n]+/g);
+            for (var i = 0; i < lines.length; i++) {
+                commandLine(lines[i]);
+            }
+            document.getElementById("cFile").value = [];
+            document.getElementById("cmd").disabled = false;
+        };
+        fileReader.readAsText(fileToLoad, "UTF-8");
     } else {
         commandLine(document.getElementById("cmd").value);
-        document.getElementById("cmd").value = null;
     }
+    document.getElementById("cmd").value = null;
 }
 
 function commandLine(line) {
     try {
-        const divided = line.split(' ');
+        let divided = line.split(' ');
+        divided = divided.filter(n => n)
+
         console.log(divided);
         switch (divided[0]) {
             case 'P':
@@ -53,7 +69,7 @@ function commandLine(line) {
                 Mconsole.innerHTML += line.substring(1) + '<br>';
                 break;
             case 'F':
-                console.log('Metrics');
+                displayMetrics();
                 break;
             case 'E':
                 Mconsole.innerHTML += "Adiooos! (No puedo cerrar la ventana)<br>";
@@ -125,6 +141,10 @@ function inputL() {
 
     updateMemory();
     updateDisk();
+}
+
+function displayMetrics() {
+
 }
 
 function restart() {

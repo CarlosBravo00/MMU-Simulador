@@ -1,6 +1,6 @@
 
 //GLOBAL
-const listProcess = []; // Lista de todos los proccesos
+let listProcess = []; // Lista de todos los proccesos
 const Memory = new Array(128).fill(0); //Memoria principal dividia en paginas inicializada con 0 (Libres)
 let memoryPointer = 0;
 const Disk = new Array(256).fill(0); // Meoria secundaria 
@@ -23,8 +23,7 @@ function ProcedureP(bytes, processid) {
         offMemory: false
     }
 
-    console.log('---Cargando', numPages, 'Paginas del proceso', processid);
-    Mconsole.innerHTML += '---Cargando ' + numPages + ' Paginas del proceso ' + processid + '<br>';
+    Mconsole.innerHTML += '+++Cargando ' + numPages + ' Paginas del proceso ' + processid + '<br>';
     for (i = 0; i < numPages; i++) {
         newProcces.pages.push(loadPage(processid));
     }
@@ -37,7 +36,7 @@ function ProcedureA(vDirc, processid, modif) {
     const numPage = Math.floor(vDirc / 16);
     const extraBytes = vDirc % 16;
 
-    console.log('---Buscando la pagina virtual:', numPage, 'del proceso:', processid)
+    Mconsole.innerHTML += '~Buscando la pagina virtual: ' + numPage + ' del proceso: ' + processid + '<br>'
     listProcess.forEach((e) => {
         if (e.id == processid) {
             if (modif) {
@@ -45,28 +44,24 @@ function ProcedureA(vDirc, processid, modif) {
             }
             if (e.pages[numPage] < 0) {
 
-                console.log('Pagina:', numPage, 'de proceso:', processid, 'esta en disco marco:', Math.abs(e.pages[numPage]) - 1);
-                Mconsole.innerHTML += 'Pagina: ' + numPage + ' de proceso: ' + processid + ' esta en disco marco: ' + (Math.abs(e.pages[numPage]) - 1) + '<br>';
+                Mconsole.innerHTML += '~~~Pagina: ' + numPage + ' de proceso: ' + processid + ' esta en disco marco: ' + (Math.abs(e.pages[numPage]) - 1) + '<br>';
 
                 Disk[Math.abs(e.pages[numPage]) - 1] = 0;
                 e.pages[numPage] = loadPage(processid);
                 e.offMemory = false;
 
-                console.log('Pagina:', numPage, 'de proceso:', processid, 'cargada en memoria en marco:', e.pages[numPage]);
-                Mconsole.innerHTML += 'Pagina: ' + numPage + ' de proceso: ' + processid + ' cargada en memoria en marco: ' + e.pages[numPage] + '<br>';
+                Mconsole.innerHTML += '~~~Pagina: ' + numPage + ' de proceso: ' + processid + ' cargada en memoria en marco: ' + e.pages[numPage] + '<br>';
 
             }
             const realDicc = (e.pages[numPage] * 16) + extraBytes;
-            console.log("Direaccion Virtual", vDirc, "Direaccion Real", realDicc);
-            Mconsole.innerHTML += " Direaccion Virtual " + vDirc + " Direaccion Real " + realDicc + '<br>';
+            Mconsole.innerHTML += "~~~ Del proceso: " + processid + " Direaccion Virtual: " + vDirc + " Direaccion Real: " + realDicc + '<br>';
         }
     });
 
 }
 
 function ProcedureL(processid) {
-    console.log('--- Liberado proceso:', processid)
-    Mconsole.innerHTML += '--- Liberado proceso: ' + processid + '<br>'
+    Mconsole.innerHTML += '------Liberando proceso: ' + processid + '<br>'
     for (i = 0; i < Memory.length; i++) {
         if (Memory[i] == processid) {
             Memory[i] = 0;
@@ -77,12 +72,9 @@ function ProcedureL(processid) {
             Disk[i] = 0;
         }
     }
-    listProcess.forEach((e) => {
-        if (e.id == processid) {
-            e.offMemory = true;
-            e.pages = [];
-        }
-    });
+    listProcess = listProcess.filter((e) => {
+        return e.id != processid;
+    })
 }
 
 function loadPage(processid) {
@@ -119,8 +111,7 @@ function ProcedureSwap(processid) {
             Memory[selectedPage] = processid;
             swapProc.pages[j] = enterSecondary(swapProc.id);
 
-            console.log('Pagina:', j, 'del proceso:', swapProc.id, 'cargada en disco marco:', Math.abs(swapProc.pages[j]) - 1)
-            Mconsole.innerHTML += '+ Pagina: ' + j + ' del proceso: ' + swapProc.id + ' cargada en disco marco: ' + (Math.abs(swapProc.pages[j]) - 1) + '<br>'
+            Mconsole.innerHTML += '------Pagina: ' + j + ' del proceso: ' + swapProc.id + ' cargada en disco marco: ' + (Math.abs(swapProc.pages[j]) - 1) + '<br>'
 
             break;
         }
@@ -171,11 +162,9 @@ function swapAlgo(processid) {
     }
 
     else if (algorithm == "Random") {
-        console.log(listProcess.length);
         do {
             swapProc = Math.floor(Math.random() * (listProcess.length))
         } while (swapProc == processid)
-        console.log(swapProc);
         return listProcess[swapProc]
     }
 }
@@ -200,8 +189,7 @@ function enterSecondary(processid) {
         return -diskPointer;
 
     } else {
-        console.log('Memoria Secundaria llena !!, libera procesos para continuar')
-        Mconsole.innerHTML += 'Memoria Secundaria llena !!, libera procesos para continuar' + '<br>'
+        Mconsole.innerHTML += '~~~Memoria Secundaria llena !!, libera procesos para continuar' + '<br>'
         return -Infinity;
     }
 
