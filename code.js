@@ -1,5 +1,4 @@
 //Archivo code.js
-//
 
 //GLOBAL
 let listProcess = []; // Lista de todos los proccesos
@@ -47,7 +46,7 @@ function ProcedureP(bytes, processid) {
 
 function ProcedureA(vDirc, processid, modif) {
 
-    const numPage = Math.floor(vDirc / 16);
+    const numPage = Math.floor(vDirc / 16); //Numero de pagina en memoria virtual 
     const extraBytes = vDirc % 16;
 
     Mconsole.innerHTML += 'A~~Buscando la pagina virtual: ' + numPage + ' del proceso: ' + processid + '<br>'

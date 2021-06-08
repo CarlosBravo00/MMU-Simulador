@@ -283,4 +283,3 @@ function validateDirecc(processid, direcc) { //Valida la peticion de direcc sea 
     });
     return returnValue
 }
-
